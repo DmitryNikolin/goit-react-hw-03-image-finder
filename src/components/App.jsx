@@ -29,19 +29,21 @@ class App extends Component {
   };
 
   getValue = ({ name, page, loading }) => {
-    console.log(this);
-    console.log('before: ', this.state.loading);
+    // console.log('before: ', this.state.loading);
     this.setState({ loading: true });
-    console.log(
-      'searchStr: ',
-      name,
-      'page: ',
-      page,
-      'loading: ',
-      this.state.loading
-    );
-    console.log('after: ', this.state.loading);
+    // console.log(
+    //   'searchStr: ',
+    //   name,
+    //   'page: ',
+    //   page,
+    //   'loading: ',
+    //   this.state.loading
+    // );
+    // console.log('after: ', this.state.loading);
     try {
+      // console.log('try before: ',this.state.loading);
+      // this.setState({ loading: true });
+      // console.log('try after: ', this.state.loading);
       axios
         .get(
           `${BASE_URL}?key=${API_KEY}&q=${name}&page=${page}&${SEARCH_PARAMS}`
@@ -66,7 +68,7 @@ class App extends Component {
     } catch (error) {
       console.error(error.message);
     } finally {
-      console.log('finally: ', this.state.loading);
+      // console.log('finally: ', this.state.loading);
       this.setState({
         loading: false,
       });
