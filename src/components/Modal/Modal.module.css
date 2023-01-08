@@ -1,0 +1,44 @@
+.Overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  cursor: pointer;
+}
+.Overlay .Modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.Overlay .Modal img {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  max-height: 90vh;
+  max-width: 100%;
+}
+.Overlay .Modal .CloseBtn {
+  position: absolute;
+  bottom: 3vh;
+  margin: auto;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  color: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 5px 5px rgba(0, 0, 0, 0.3);
+  transform: scale(1);
+  transition: transform 1s ease-in-out;
+}
+.Overlay .Modal .CloseBtn:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+  color: red;
+}/*# sourceMappingURL=Modal.module.css.map */
