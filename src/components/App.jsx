@@ -71,13 +71,14 @@ class App extends Component {
     }));
   };
 
-  handleFormSubmit = ({ name }) => {
+  handleFormSubmit = ({ name, page }) => {
     const newQuery = name.trim().toLowerCase();
     if (newQuery === '') {
       return console.log('no images');
     }
     this.setState({
       name,
+      page,
     });
   };
 

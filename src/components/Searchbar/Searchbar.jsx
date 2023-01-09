@@ -10,7 +10,9 @@ class Searchbar extends Component {
 
   handleChange = e => {
     const { value } = e.currentTarget;
-    this.setState({ name: value });
+    this.setState({
+      name: value,
+    });
   };
 
   handleSubmit = e => {
@@ -29,7 +31,7 @@ class Searchbar extends Component {
   };
 
   reset() {
-    this.setState({ name: '' });
+    this.setState({ name: '', page: 1 });
   }
 
   render() {
