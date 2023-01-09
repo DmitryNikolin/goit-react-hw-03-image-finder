@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import Notiflix from 'notiflix';
-import { BASE_URL, API_KEY, SEARCH_PARAMS } from './../utils/constants';
+import { pageLimit, getGallery } from 'services/API';
 import Searchbar from './Searchbar/Searchbar';
 import Button from './Button/Button';
 import ImageGallery from './ImageGallery/ImageGallery';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
 import Modal from './Modal/Modal';
 import Loader from './Loader/Loader';
+
+console.log(pageLimit);
 
 class App extends Component {
   state = {
@@ -18,7 +19,49 @@ class App extends Component {
     loading: false,
     largeImageURL: '',
     tags: '',
+    status: 'idle',
   };
+
+  async componentDidUpdate(_, prevState) {
+    const { name, page } = this.state;
+    try {
+      if (prevState.name !== name || prevState.page !== page) {
+        this.setState({
+          loading: true,
+          status: 'pending',
+        });
+      }
+      if (prevState.name !== name) {
+        const { hits } = await getGallery(name, page);
+        if (hits.totalHits === 0) {
+          Notiflix.Notify.failure('No images found!');
+        }
+
+        this.setState(() => ({
+          hits: [...hits],
+          loading: false,
+          status: 'resolved',
+        }));
+        return;
+      }
+
+      if (prevState.page !== page && page !== 1) {
+        const { hits } = await getGallery(name, page);
+        this.setState(prevState => ({
+          hits: [...prevState.hits, ...hits],
+          loading: false,
+          status: 'resolved',
+        }));
+      }
+      return;
+    } catch (error) {
+      this.setState({
+        error: true,
+        status: 'rejected',
+      });
+      console.log(error);
+    }
+  }
 
   toggleModal = (imageURL, tag, id) => {
     this.setState(({ showModal }) => ({
@@ -28,63 +71,29 @@ class App extends Component {
     }));
   };
 
-  getValue = ({ name, page, loading }) => {
-    // console.log('before: ', this.state.loading);
-    this.setState({ loading: true });
-    // console.log(
-    //   'searchStr: ',
-    //   name,
-    //   'page: ',
-    //   page,
-    //   'loading: ',
-    //   this.state.loading
-    // );
-    // console.log('after: ', this.state.loading);
-    try {
-      // console.log('try before: ',this.state.loading);
-      // this.setState({ loading: true });
-      // console.log('try after: ', this.state.loading);
-      axios
-        .get(
-          `${BASE_URL}?key=${API_KEY}&q=${name}&page=${page}&${SEARCH_PARAMS}`
-        )
-        .then(response => {
-          if (!response.data.hits.length) {
-            Notiflix.Notify.failure('No images found!');
-          } else if (name === this.state.name) {
-            this.setState(state => ({
-              hits: [...state.hits, ...response.data.hits],
-              name: name,
-              page: state.page + 1,
-            }));
-          } else {
-            this.setState(state => ({
-              hits: response.data.hits,
-              name: name,
-              page: state.page + 1,
-            }));
-          }
-        });
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      // console.log('finally: ', this.state.loading);
-      this.setState({
-        loading: false,
-      });
+  handleFormSubmit = ({ name }) => {
+    const newQuery = name.trim().toLowerCase();
+    if (newQuery === '') {
+      return console.log('no images');
     }
+    this.setState({
+      name,
+    });
   };
 
   loadMore = () => {
-    this.getValue(this.state);
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   render() {
-    const { hits, showModal, loading, largeImageURL, tags } = this.state;
+    const { hits, showModal, loading, largeImageURL, tags, status } =
+      this.state;
 
     return (
       <div>
-        <Searchbar onSubmitHandler={this.getValue} />
+        <Searchbar onSubmitHandler={this.handleFormSubmit} />
 
         {hits && (
           <ImageGallery>
@@ -96,9 +105,13 @@ class App extends Component {
           <Modal onClose={this.toggleModal} url={largeImageURL} alt={tags} />
         )}
 
-        {loading && <Loader />}
+        {status === 'pending' && loading && <Loader />}
 
-        {hits.length > 0 && <Button onButtonClick={() => this.loadMore()} />}
+        {hits.length > 0 &&
+          hits.length >= pageLimit &&
+          status === 'resolved' && (
+            <Button onButtonClick={() => this.loadMore()} />
+          )}
       </div>
     );
   }
