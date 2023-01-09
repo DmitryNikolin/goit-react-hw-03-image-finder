@@ -5,10 +5,10 @@ const Loader = () => {
   return (
     <div className={styles.loader}>
       <BallTriangle
-        height={100}
-        width={100}
+        height={250}
+        width={250}
         radius={5}
-        color="rgba(128, 128, 128, 0.9)"
+        color="rgba(85, 170, 255, 0.9)"
         ariaLabel="ball-triangle-loading"
         wrapperClass={{}}
         wrapperStyle=""
