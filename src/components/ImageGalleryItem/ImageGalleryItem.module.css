@@ -13,7 +13,7 @@
 }
 .ImageGalleryItem:hover {
   transform: scale(1.15);
-  cursor: pointer;
+  cursor: zoom-in;
 }
 .ImageGalleryItem .ImageGalleryItemImage {
   width: 22vw;
